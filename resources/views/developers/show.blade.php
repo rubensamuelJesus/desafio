@@ -41,7 +41,7 @@
                     {{ $developer->name }}
                 </h1>
                 <p class="fonte-mono" style="color: var(--cor-accent-soft); font-size: 1rem; margin: 0;">
-                    @{{ $developer->nickname }}
+                    {{ '@' . $developer->nickname }}
                 </p>
             </div>
         </div>

@@ -107,7 +107,7 @@
                                 {{ $dev->name }}
                             </p>
                             <p class="fonte-mono" style="font-size: 0.85rem; color: var(--cor-accent-soft); margin: 0;">
-                                @{{ $dev->nickname }}
+                                {{ '@' . $dev->nickname }}
                             </p>
                         </div>
 
@@ -131,7 +131,7 @@
                     @if($dev->stack)
                         <div style="display: flex; flex-wrap: wrap; gap: 6px;">
                             @foreach($dev->stack as $tech)
-                                <span class="tag-tech">{{ $tech }}</span>
+                                <span class="tag-tech">{{ $tech }}</span>&nbsp;
                             @endforeach
                         </div>
                     @else
