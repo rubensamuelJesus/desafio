@@ -1,58 +1,163 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Desafio Fullstack Dynamik
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Repositório: https://github.com/rubensamuelJesus/desafio
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+# Stack Tecnológica
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Laravel 12.x
+- Blade (templating nativo Laravel)
+- Tailwind CSS 4.x
+- SQLite 3.x
+- PHP 8.4
+- Node.js 20+
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Learning Laravel
+# Porquê esta stack?
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Laravel foi escolhido pela sua maturidade, organização MVC clara, e pelo conjunto de ferramentas integradas que aceleram o desenvolvimento sem sacrificar qualidade. É uma tecnologia com a qual já trabalhei várias vezes e é bastante prática para trabalhar.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Inclui Form Requests para separar a lógica de validação do controller, API Resources para garantir um formato de resposta JSON consistente, Eloquent ORM com casting automático de JSON para o campo stack, UUID nativo e PHPUnit integrado para testes.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+Blade por ser o motor de templates nativo do Laravel, sem overhead de configuração e sem dependências extra. Integra-se naturalmente com o backend.
 
-## Agentic Development
+Tailwind CSS permite escrever UI responsiva e coesa diretamente no HTML sem sair do ficheiro Blade.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+SQLite foi escolhido por ser mais trivial de configurar, dado que o projeto tem poucos registos e não justifica um servidor de base de dados separado. Torna o setup imediato em qualquer máquina.
 
-```bash
-composer require laravel/boost --dev
 
-php artisan boost:install
-```
+# Instalação e Arranque
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Pré-requisitos:
+- PHP >= 8.4
+- Composer
+- Node.js >= 20
+- Laravel Herd (recomendado) ou servidor PHP equivalente
 
-## Contributing
+Passos:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    git clone https://github.com/rubensamuelJesus/desafio.git
+    cd desafio
+    composer install
+    cp .env.example .env
+    php artisan key:generate
+    touch database/database.sqlite
+    php artisan migrate
+    npm install
+    npm run build
+    php artisan serve
 
-## Code of Conduct
+Com Laravel Herd, basta colocar o projeto na pasta ~/Herd/ e aceder em http://desafio.test.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Nota: este projeto foi desenvolvido e testado com Laravel Herd. O método recomendado de instalação é o descrito acima.
 
-## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Docker (não testado)
 
-## License
+Foi incluído um ficheiro docker-compose.yml como referência, no entanto não foi testado em ambiente Docker. O método recomendado de execução é com Laravel Herd conforme descrito acima.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+    docker-compose up -d
+
+
+# Endpoints da API
+
+Base URL: /api
+
+# POST /api/devs — Criar developer
+
+    curl -X POST http://desafio.test/api/devs \
+      -H "Content-Type: application/json" \
+      -d '{
+        "nickname": "judit",
+        "name": "Judit Polgár",
+        "birth_date": "1976-07-23",
+        "stack": ["C#", "Node", "Oracle"]
+      }'
+
+Respostas:
+- 201 Created — developer criado, header Location: /devs/:id
+- 422 Unprocessable Entity — campos inválidos (null, duplicado)
+- 400 Bad Request — tipos incorretos
+
+# GET /api/devs — Listar developers
+
+    curl http://desafio.test/api/devs
+
+Retorna os primeiros 20 developers. O header X-Total-Count indica o total na base de dados.
+
+# GET /api/devs?terms=[:termo] — Procurar developers
+
+    curl http://desafio.test/api/devs?terms=node
+
+Pesquisa por nickname, name e elementos de stack (case-insensitive).
+Retorna 400 se terms for vazio ou não informado.
+
+# GET /api/devs/:id — Detalhe de developer
+
+    curl http://desafio.test/api/devs/f7379ae8-8f9b-4cd5-8221-51efe19e721b
+
+- 200 OK — developer encontrado
+- 404 Not Found — UUID não existe
+
+
+# Frontend
+
+Rota / — Lista de developers
+Rota /developers/create — Formulário de criação
+Rota /developers/:id — Detalhe de um developer
+
+
+# Testes
+
+    php artisan test
+
+Os testes cobrem:
+- Criação válida com e sem stack
+- Validação 422 para valores nulos e duplicados
+- Validação 400 para tipos incorretos
+- Listagem e search por termos
+- Detalhe por UUID com 200 e 404
+
+
+# Estrutura do Projeto
+
+    desafio/
+        app/
+            Http/
+                Controllers/
+                    Api/
+                        DeveloperController.php
+                    Web/
+                        DeveloperWebController.php
+                Requests/
+                    StoreDeveloperRequest.php
+                Resources/
+                    DeveloperResource.php
+            Models/
+                Developer.php
+        database/
+            migrations/
+                
+        resources/
+            views/
+                layouts/
+                    app.blade.php
+                developers/
+                    index.blade.php
+                    show.blade.php
+                    create.blade.php
+        routes/
+            api.php
+            web.php
+        tests/
+            Feature/
+                DeveloperApiTest.php
+
+
+# Decisões Técnicas
+
+Search com campo search_text — em vez de fazer LIKE em múltiplas colunas com OR, o campo search_text é gerado automaticamente na criação, concatenando nickname, name e stack em minúsculas. O search faz apenas um LIKE neste campo indexado.
+
+Distinção 400 vs 422 — 422 para valores semanticamente inválidos como null ou nickname duplicado, 400 para tipos incorretos como name com número ou stack com inteiros. A separação é feita no StoreDeveloperRequest com validação de tipos em prepareForValidation() antes das regras do Laravel correrem.
+
+Stack como JSON — o campo stack é guardado como JSON no SQLite com cast automático para array PHP.
